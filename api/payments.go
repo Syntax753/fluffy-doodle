@@ -2,6 +2,7 @@
 package payments
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/syntax753/fluffy-doodle/model"
@@ -19,7 +20,8 @@ func Routes() *chi.Mux {
 
 // GetPayment returns a single payment given an id
 func GetPayment(w http.ResponseWriter, r *http.Request) {
-	_ = chi.URLParam(r, "id")
+	id := chi.URLParam(r, "id")
+	log.Printf("GET payment id %s\n", id)
 
 	payment := &model.Payment{}
 	render.JSON(w, r, payment)
