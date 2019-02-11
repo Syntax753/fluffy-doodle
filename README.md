@@ -1,2 +1,2 @@
 # fluffy-doodle
-Prootype for a payment API
+Protoype for a payment API
