@@ -1,4 +1,5 @@
-package api
+// Package payments configures the routes for the payments api
+package payments
 
 import (
 	"net/http"
@@ -11,15 +12,15 @@ import (
 
 // Routes defines the api for the /api group of methods
 func Routes() *chi.Mux {
-	// GetPayment is part of CRUD operations to fetch a payment
-
+	router := chi.NewRouter()
+	router.Get("/{id}", GetPayment)
+	return router
 }
 
 // GetPayment returns a single payment given an id
 func GetPayment(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	_ = chi.URLParam(r, "id")
 
-	Payment := &model.Payment{}
-
-	render.JSON(w, r, "Fetch ID"+id)
+	payment := &model.Payment{}
+	render.JSON(w, r, payment)
 }
