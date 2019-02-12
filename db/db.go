@@ -27,10 +27,11 @@ func init() {
 
 // NewPayDB sets up the database for payments
 func NewPayDB() (*bolt.DB, error) {
-
 	log.Println("Opening database")
 
-	db, err := bolt.Open("../data/"+conf.DBName+".db", 0600, &bolt.Options{Timeout: 1 * time.Second})
+	dbName := "../data/"+conf.DBName+".db"
+
+	db, err := bolt.Open(, 0600, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		return nil, err
 	}

@@ -1,5 +1,8 @@
 package model
 
-// Payment represents one single payment transaction
-type Payment struct {
+// TX represents one single transaction - typically a payment
+type TX struct {
+	Type    string
+	ID      string `json:"id"`
+	Version int
 }
