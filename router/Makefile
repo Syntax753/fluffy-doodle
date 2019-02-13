@@ -5,7 +5,7 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 BINARY_NAME=bin/router
 
-all: test build
+all: test clean build
 build: 
 		$(GOBUILD) -o $(BINARY_NAME) -v
 test: 

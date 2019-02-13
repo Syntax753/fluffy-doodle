@@ -29,11 +29,17 @@ func init() {
 func NewPayDB() (*bolt.DB, error) {
 	log.Println("Opening database")
 
-	dbName := "../data/"+conf.DBName+".db"
+	dbName := "../data/" + conf.DBName + ".db"
 
-	db, err := bolt.Open(, 0600, &bolt.Options{Timeout: 1 * time.Second})
+	
+
+	db, err := bolt.Open(dbName, 0600, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		return nil, err
 	}
 	return db, nil
+}
+
+func Initialise(env string) {
+
 }

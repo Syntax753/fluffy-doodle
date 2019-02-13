@@ -23,6 +23,6 @@ func GetPayment(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	log.Printf("GET payment id %s\n", id)
 
-	payment := &model.Payment{}
+	payment := &model.TX{}
 	render.JSON(w, r, payment)
 }
