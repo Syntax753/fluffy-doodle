@@ -39,7 +39,3 @@ func NewPayDB() (*bolt.DB, error) {
 	}
 	return db, nil
 }
-
-func Initialise(env string) {
-
-}
