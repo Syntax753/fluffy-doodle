@@ -9,22 +9,20 @@ import (
 	"github.com/syntax753/fluffy-doodle/model"
 )
 
-// PrepareForLoad is a helper func to unmarshal json into an array of transactions
-func prepareForLoad(jsonData []byte) (txs []model.TX, err error) {
-	var data model.Data
+// UnmarshalData is a helper func to unmarshal json into memory
+func unmarshalData(jsonData []byte) (data model.Data, err error) {
 	err = json.Unmarshal(jsonData, &data)
 	if err != nil {
 		return
 	}
 
-	log.Printf("Converted %v transactions", len(data.TXs))
-
-	return data.TXs, nil
+	log.Printf("Found %v transactions", len(data.TXs))
+	return data, nil
 }
 
-// PrepareFileForLoad is a helper func to unmarshal a json file into an array of transactions
-func PrepareFileForLoad(file string) (txs []model.TX, err error) {
-	log.Printf("Converting file %v", file)
+// ProcessFile is a helper func to unmarshal the json transactions
+func ProcessFile(file string) (data model.Data, err error) {
+	log.Printf("Processing file %v", file)
 	jsonFile, err := os.Open(file)
 	if err != nil {
 		return
@@ -36,5 +34,5 @@ func PrepareFileForLoad(file string) (txs []model.TX, err error) {
 		return
 	}
 
-	return prepareForLoad(jsonData)
+	return unmarshalData(jsonData)
 }

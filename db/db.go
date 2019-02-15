@@ -1,39 +1,62 @@
 package db
 
 import (
+	"fmt"
 	"log"
-	"time"
+
+	"github.com/syntax753/fluffy-doodle/model"
 
 	"github.com/BurntSushi/toml"
-	"github.com/boltdb/bolt"
 )
 
 type config struct {
-	DBName string
+	Schema string
 }
 
 const configFile = "config.toml"
 
 var (
 	conf config
+	txdb TXDB
 )
 
-func init() {
-	log.Println("Starting database")
-	if _, err := toml.DecodeFile(configFile, &conf); err != nil {
-		log.Fatal("Can't open config file\n", err)
-	}
+// TXDB stores the transactions as a key value store in memory
+type TXDB struct {
+	TXs model.IDMap
 }
 
-// NewPayDB sets up the database for payments
-func NewPayDB() (*bolt.DB, error) {
-	log.Println("Opening database")
-
-	dbName := "../data/" + conf.DBName + ".db"
-
-	db, err := bolt.Open(dbName, 0600, &bolt.Options{Timeout: 1 * time.Second})
-	if err != nil {
-		return nil, err
+func init() {
+	log.Println("Initialising database")
+	if _, err := toml.DecodeFile(configFile, &conf); err != nil {
+		log.Fatalf("Can't open config file %v: %v\n", configFile, err)
 	}
-	return db, nil
+
+	data, err := ProcessFile(conf.Schema)
+
+	if err != nil {
+		log.Fatalf("Can't load transactions from %v: %v\n", conf.Schema, err)
+	}
+
+	txdb = TXDB{TXs: *data.AsMap()}
+
+	log.Println("Database OK")
+}
+
+// TXNotFound is the error for when a transaction can not be found
+type TXNotFound struct {
+	ID string
+}
+
+func (tx *TXNotFound) Error() string {
+	return fmt.Sprintf("TX with ID %s not found", tx.ID)
+}
+
+// Find returns a transaction for an ID
+func (db TXDB) Find(ID string) (model.TX, error) {
+
+	if v, ok := db.TXs[ID]; ok {
+		return v, nil
+	}
+
+	return model.TX{}, &TXNotFound{ID}
 }

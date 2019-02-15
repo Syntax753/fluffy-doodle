@@ -1,17 +1,22 @@
-package db
+package db_test
 
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"testing"
+
+	"github.com/syntax753/fluffy-doodle/db"
 
 	"github.com/stretchr/testify/assert"
 )
 
+// Test for reading in the json transactions
 func TestPrepareFileForLoad(t *testing.T) {
-	txs, err := PrepareFileForLoad("schema/test.json")
-
+	data, err := db.ProcessFile("schema/test.json")
 	assert.Nil(t, err)
+
+	txs := data.TXs
 	assert.NotEmpty(t, txs, "Expecting transactions")
 
 	tx := txs[0]
@@ -19,8 +24,27 @@ func TestPrepareFileForLoad(t *testing.T) {
 	b, err := json.MarshalIndent(tx, "", "\t")
 
 	s := fmt.Sprintf("%s", b)
-
 	assert.Equal(t, rec1, s, "")
+}
+
+// Test validating the IDMap is well constructed
+func TestIDMap(t *testing.T) {
+	data, err := db.ProcessFile("schema/test.json")
+	assert.Nil(t, err)
+	assert.NotEmpty(t, data.TXs, "Expected transactions")
+
+	m := *data.AsMap()
+
+	log.Printf("%+v\n", m)
+	assert.Equal(t, len(data.TXs), len(m), "Expected same transaction count")
+
+	// Check that elements are accessible
+	for _, v := range m {
+		assert.NotNil(t, v.Attributes, "Expected Attributes")
+		assert.NotNil(t, v.Attributes.ChargesInformation, "Expected ChargesInfo")
+		assert.NotNil(t, v.Attributes.ChargesInformation.SenderCharges, "Expected SenderCharges")
+	}
+
 }
 
 const rec1 = `{

@@ -74,3 +74,17 @@ type TX struct {
 type Data struct {
 	TXs []TX `json:"data"`
 }
+
+// IDMap represents transactions as a map with id keys
+type IDMap map[string]TX
+
+// AsMap provides the transaction data as a map with id keys
+func (data *Data) AsMap() *IDMap {
+	m := make(IDMap, len(data.TXs))
+
+	for _, v := range data.TXs {
+		m[v.ID] = v
+	}
+
+	return &m
+}

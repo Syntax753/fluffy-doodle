@@ -45,11 +45,11 @@ func init() {
 	log.SetOutput(os.Stdout)
 }
 
-// Routes retuns the mux for all the restful endpoints
-func Routes() *chi.Mux {
-	router := chi.NewRouter()
+// Router retuns the mux for all the restful endpoints
+func Router() *chi.Mux {
+	r := chi.NewRouter()
 
-	router.Use(
+	r.Use(
 		render.SetContentType(render.ContentTypeJSON),
 		middleware.Logger,
 		middleware.DefaultCompress,
@@ -58,26 +58,27 @@ func Routes() *chi.Mux {
 		middleware.RequestID,
 	)
 
-	router.Route("/v1", func(r chi.Router) {
+	r.Route("/v1", func(r chi.Router) {
 		r.Mount("/api/payments", payments.Routes())
 	})
 
-	return router
+	return r
 
 }
 
 func main() {
-	router := Routes()
+	r := Router()
 
 	walkFunc := func(method string, route string, handler http.Handler, middwares ...func(http.Handler) http.Handler) error {
 		log.Printf("%s %s\n", method, route)
 		return nil
 	}
 
-	if err := chi.Walk(router, walkFunc); err != nil {
+	if err := chi.Walk(r, walkFunc); err != nil {
 		log.Panicf("Logging err: %s\n", err.Error())
 	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), router))
+	r.
+		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), router))
 
 }
