@@ -31,8 +31,6 @@ func NewPayDB() (*bolt.DB, error) {
 
 	dbName := "../data/" + conf.DBName + ".db"
 
-	
-
 	db, err := bolt.Open(dbName, 0600, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		return nil, err

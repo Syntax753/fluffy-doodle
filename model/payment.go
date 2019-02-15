@@ -8,67 +8,66 @@ type Currency string
 
 // Amount represents an amount of certain denomination
 type Amount struct {
-	Amount   Value
-	Currency Currency
+	Amount   Value    `json:"amount"`
+	Currency Currency `json:"currency"`
 }
 
 // Account represents a funds account (such as a bank account)
 type Account struct {
-	AccountName       string
-	AccountNumber     string
-	AccountNumberCode string
-	AccountType       int
-	Address           string
-	BankID            string `json:"bank_id"`
-	BankIDCode        string
-	Name              string
+	AccountName       string `json:"account_name,omitempty"`
+	AccountNumber     string `json:"account_number,omitempty"`
+	AccountNumberCode string `json:"account_number_code,omitempty"`
+	AccountType       int    `json:"account_type,omitempty"`
+	Address           string `json:"address,omitempty"`
+	BankID            string `json:"bank_id,omitempty"`
+	BankIDCode        string `json:"bank_id_code,omitempty"`
+	Name              string `json:"name,omitempty"`
 }
 
 // ChargesInformation represents any charges associated with a transaction
 type ChargesInformation struct {
-	BearerCode              string
-	ReceiverChargesAmount   Value
-	ReceiverChargesCurrency Currency
-	SenderCharges           []Amount
+	BearerCode              string   `json:"bearer_code"`
+	SenderCharges           []Amount `json:"sender_charges"`
+	ReceiverChargesAmount   Value    `json:"receiver_charges_amount"`
+	ReceiverChargesCurrency Currency `json:"receiver_charges_currency"`
 }
 
 // FX represents the market exchange rate
 type FX struct {
-	ContractReference string
-	ExchangeRate      string
-	OriginalAmount    Value
-	OriginalCurrency  Currency
+	ContractReference string   `json:"contract_reference"`
+	ExchangeRate      string   `json:"exchange_rate"`
+	OriginalAmount    Value    `json:"original_amount"`
+	OriginalCurrency  Currency `json:"original_currency"`
 }
 
 // Attributes represents the transaction meta data
 type Attributes struct {
-	Amount               Value
-	Currency             Currency
-	EndToEndReference    string
-	NumericReference     string
-	PaymentID            string `json:"payment_id"`
-	PaymentPurpose       string
-	PaymentScheme        string
-	PaymentType          string
-	ProcessingDate       string
-	Reference            string
-	SchemePaymentSubType string
-	SchemePaymentType    string
-	BeneficiaryParty     Account
-	ChargesInformation   ChargesInformation
-	DebtorParty          Account
-	SponsorParty         Account
-	Fx                   FX
+	Amount               Value               `json:"amount"`
+	BeneficiaryParty     *Account            `json:"beneficiary_party"`
+	ChargesInformation   *ChargesInformation `json:"charges_information"`
+	Currency             Currency            `json:"currency"`
+	DebtorParty          *Account            `json:"debtor_party"`
+	EndToEndReference    string              `json:"end_to_end_reference"`
+	Fx                   *FX                 `json:"fx"`
+	NumericReference     string              `json:"numeric_reference"`
+	PaymentID            string              `json:"payment_id"`
+	PaymentPurpose       string              `json:"payment_purpose"`
+	PaymentScheme        string              `json:"payment_scheme"`
+	PaymentType          string              `json:"payment_type"`
+	ProcessingDate       string              `json:"processing_date"`
+	Reference            string              `json:"reference"`
+	SchemePaymentSubType string              `json:"scheme_payment_sub_type"`
+	SchemePaymentType    string              `json:"scheme_payment_type"`
+	SponsorParty         *Account            `json:"sponsor_party"`
 }
 
 // TX represents one single transaction - typically a payment
 type TX struct {
-	Type           string
-	ID             string `json:"id"`
-	Version        int
-	OrganisationID string `json:"organisation_id"`
-	// Attributes     *Attributes `json:",omitempty"`
-	Attributes Attributes
+	Type           string      `json:"type"`
+	ID             string      `json:"id"`
+	Version        int         `json:"version"`
+	OrganisationID string      `json:"organisation_id"`
+	Attributes     *Attributes `json:"attributes"`
 }
 
 // Data contains an array of transactions

@@ -9,8 +9,7 @@ import (
 	"github.com/syntax753/fluffy-doodle/model"
 )
 
-// PrepareForLoad is a helper func to unmarshal transaction json
-// into an arbitrary array
+// PrepareForLoad is a helper func to unmarshal json into an array of transactions
 func prepareForLoad(jsonData []byte) (txs []model.TX, err error) {
 	var data model.Data
 	err = json.Unmarshal(jsonData, &data)
@@ -23,8 +22,7 @@ func prepareForLoad(jsonData []byte) (txs []model.TX, err error) {
 	return data.TXs, nil
 }
 
-// PrepareFileForLoad is a helper func to unmarshal a json file into
-// an arbitrary array
+// PrepareFileForLoad is a helper func to unmarshal a json file into an array of transactions
 func PrepareFileForLoad(file string) (txs []model.TX, err error) {
 	log.Printf("Converting file %v", file)
 	jsonFile, err := os.Open(file)
