@@ -63,7 +63,6 @@ func Router() *chi.Mux {
 	})
 
 	return r
-
 }
 
 func main() {
@@ -78,7 +77,6 @@ func main() {
 		log.Panicf("Logging err: %s\n", err.Error())
 	}
 
-	r.
-		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), router))
+	r.log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), router))
 
 }

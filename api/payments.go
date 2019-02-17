@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/syntax753/fluffy-doodle/model"
+	"github.com/syntax753/fluffy-doodle/db"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -21,10 +21,14 @@ func Routes() *chi.Mux {
 
 // GetPayment returns a single payment given an id
 func GetPayment(w http.ResponseWriter, r *http.Request) {
-	IDMap := r.Context().Value("IDMap")
-	id := chi.URLParam(r, "id")
-	log.Printf("GET payment id %s\n", id)
+	ID := chi.URLParam(r, "id")
+	log.Printf("GET payment id %s\n", ID)
 
-	payment := &model.TX{}
-	render.JSON(w, r, payment)
+	tx, err := db.DB.Find(ID)
+
+	if err != nil {
+		render.Status(r, http.StatusNotFound)
+		return
+	}
+	render.JSON(w, r, tx)
 }

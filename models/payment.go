@@ -1,4 +1,4 @@
-package model
+package models
 
 // Value represents a financial value
 type Value string

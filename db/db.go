@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/syntax753/fluffy-doodle/model"
-
 	"github.com/BurntSushi/toml"
+	"github.com/syntax753/fluffy-doodle/models"
+	model "github.com/syntax753/fluffy-doodle/models"
 )
 
 type config struct {
@@ -17,13 +17,13 @@ const configFile = "config.toml"
 
 var (
 	conf config
-	txdb TXDB
 )
 
-// TXDB stores the transactions as a key value store in memory
-type TXDB struct {
-	TXs model.IDMap
+type Env struct {
+	db models.Datastore
 }
+
+func NewDB(string)
 
 func init() {
 	log.Println("Initialising database")
@@ -37,7 +37,7 @@ func init() {
 		log.Fatalf("Can't load transactions from %v: %v\n", conf.Schema, err)
 	}
 
-	txdb = TXDB{TXs: *data.AsMap()}
+	Env := &DB{TXs: data.AsMap}
 
 	log.Println("Database OK")
 }
@@ -52,7 +52,7 @@ func (tx *TXNotFound) Error() string {
 }
 
 // Find returns a transaction for an ID
-func (db TXDB) Find(ID string) (model.TX, error) {
+func (db *DB) Find(ID string) (model.TX, error) {
 
 	if v, ok := db.TXs[ID]; ok {
 		return v, nil
