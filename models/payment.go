@@ -75,16 +75,26 @@ type Data struct {
 	TXs []TX `json:"data"`
 }
 
-// IDMap represents transactions as a map with id keys
-type IDMap map[string]TX
-
-// AsMap provides the transaction data as a map with id keys
-func (data *Data) AsMap() *IDMap {
-	m := make(IDMap, len(data.TXs))
-
-	for _, v := range data.TXs {
-		m[v.ID] = v
+// GetTX is responsible for retrieving a transaction
+func (db *DB) GetTX(ID string) (*TX, error) {
+	if v, ok := db.TXs[ID]; ok {
+		return v, nil
 	}
 
-	return &m
+	return nil, &TXNotFound{ID}
+}
+
+// CreateTX is responsible for creating a transaction
+func (db *DB) CreateTX(tx TX) (*TX, error) {
+	return nil, nil
+}
+
+// UpdateTX is responsible for updating a transaction
+func (db *DB) UpdateTX(tx TX) (*TX, error) {
+	return nil, nil
+}
+
+// DeleteTX is responsible for deleting a transaction
+func (db *DB) DeleteTX(ID string) error {
+	return nil
 }

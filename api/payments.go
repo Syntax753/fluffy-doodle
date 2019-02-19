@@ -5,26 +5,40 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/syntax753/fluffy-doodle/db"
+	"github.com/syntax753/fluffy-doodle/models"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 )
 
+// Env holds the db interfaceallowing it to be mocked in tests
+type Env struct {
+	db models.Datastore
+}
+
 // Routes defines the api for the /api group of methods
-func Routes() *chi.Mux {
+func Routes(environment string) *chi.Mux {
+
+	db, err := models.NewDB(environment)
+
+	if err != nil {
+		log.Fatalf("Cannot open database: %v", err)
+	}
+
+	env := &Env{db}
+
 	router := chi.NewRouter()
-	router.Get("/{id}", GetPayment)
+	router.Get("/{id}", env.GetPayment)
 	// router.Post("/{id}", handlerFn)
 	return router
 }
 
 // GetPayment returns a single payment given an id
-func GetPayment(w http.ResponseWriter, r *http.Request) {
+func (env *Env) GetPayment(w http.ResponseWriter, r *http.Request) {
 	ID := chi.URLParam(r, "id")
 	log.Printf("GET payment id %s\n", ID)
 
-	tx, err := db.DB.Find(ID)
+	tx, err := env.db.GetTX(ID)
 
 	if err != nil {
 		render.Status(r, http.StatusNotFound)

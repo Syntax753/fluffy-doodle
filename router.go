@@ -59,7 +59,7 @@ func Router() *chi.Mux {
 	)
 
 	r.Route("/v1", func(r chi.Router) {
-		r.Mount("/api/payments", payments.Routes())
+		r.Mount("/api/payments", payments.Routes("prod"))
 	})
 
 	return r

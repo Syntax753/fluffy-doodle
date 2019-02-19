@@ -1,5 +1,5 @@
 // Package payments configures the routes for the payments api
-package payments
+package payments_test
 
 import (
 	"net/http"
@@ -7,57 +7,50 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/render"
+	payments "github.com/syntax753/fluffy-doodle/api"
+
+	"github.com/go-chi/chi"
 )
 
-func TestGetPayment(t *testing.T) {
-	type args struct {
-		w http.ResponseWriter
-	}
+var r *chi.Mux
 
-	tests := []struct {
-		Name           string
-		Method         string
-		URL            string
-		ExpectedStatus int
-		ExpectedBody   string
-		ExpectedError  string
-	}{
-		{
-			"Get single payment",
-			"GET",
-			"/1",
-			200,
-			"GET",
-			"",
-		},
-		{
-			"Wrong url",
-			"GET",
-			"/",
-			404,
-			"",
-			"",
-		},
-	}
+func init() {
+	r = chi.NewRouter()
 
-	router := Routes()
+	r.Use(
+		render.SetContentType(render.ContentTypeJSON),
+		middleware.Logger,
+		middleware.DefaultCompress,
+		middleware.RedirectSlashes,
+		middleware.Recoverer,
+		middleware.RequestID,
+	)
 
-	for _, tt := range tests {
+	r.Route("/v1", func(r chi.Router) {
+		r.Mount("/api/payments", payments.Routes("test"))
+	})
 
-		r, err := http.NewRequest(tt.Method, tt.URL, nil)
-		assert.NoError(t, err)
+}
 
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, r)
+func TestTXGetUnknown(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/v1/api/payments/123", nil)
+	r.ServeHTTP(rec, req)
 
-		assert.Equal(t, tt.ExpectedStatus, w.Code)
-		if tt.ExpectedBody != "" {
-			assert.Contains(t, w.Body.String(), tt.ExpectedBody)
-		}
+	expectedStatus := 404
 
-		if tt.ExpectedError != "" {
-			assert.Contains(t, w.Body, tt.ExpectedError)
-		}
+	assert.Equal(t, expectedStatus, rec.Code, "Expected a 404 status")
+}
 
-	}
+func TestTXGetSuccess(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/v1/api/payments/4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43", nil)
+	r.ServeHTTP(rec, req)
+
+	expectedStatus := 200
+
+	assert.Equal(t, expectedStatus, rec.Code, "Expected a 200 status")
 }
