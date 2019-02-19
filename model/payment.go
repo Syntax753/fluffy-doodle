@@ -1,4 +1,10 @@
-package models
+package model
+
+import (
+	"fmt"
+
+	uuid "github.com/satori/go.uuid"
+)
 
 // Value represents a financial value
 type Value string
@@ -75,8 +81,30 @@ type Data struct {
 	TXs []TX `json:"data"`
 }
 
+// GetAllTX is responsible for retrieving all the transactions
+// TODO pagination
+func (db *DB) GetAllTX() ([]*TX, error) {
+	db.Lock()
+	defer db.Unlock()
+
+	if db.TXs == nil || len(db.TXs) == 0 {
+		return nil, &TXDatabaseEmpty{}
+	}
+
+	m := make([]*TX, 0, len(db.TXs))
+
+	for _, val := range db.TXs {
+		m = append(m, val)
+	}
+
+	return m, nil
+}
+
 // GetTX is responsible for retrieving a transaction
 func (db *DB) GetTX(ID string) (*TX, error) {
+	db.Lock()
+	defer db.Unlock()
+
 	if v, ok := db.TXs[ID]; ok {
 		return v, nil
 	}
@@ -86,15 +114,55 @@ func (db *DB) GetTX(ID string) (*TX, error) {
 
 // CreateTX is responsible for creating a transaction
 func (db *DB) CreateTX(tx TX) (*TX, error) {
-	return nil, nil
+	// Arbirtrary value that should be mandatory
+	if tx.Type != "Payment" {
+		return nil, &TXInvalid{}
+	}
+
+	// Generate id if mising
+	if tx.ID == "" {
+		tx.ID = fmt.Sprintf("%s", uuid.Must(uuid.NewV4()))
+	}
+
+	db.Lock()
+	defer db.Unlock()
+	db.TXs[tx.ID] = &tx
+
+	return &tx, nil
 }
 
 // UpdateTX is responsible for updating a transaction
 func (db *DB) UpdateTX(tx TX) (*TX, error) {
-	return nil, nil
+	// Arbirtrary value that should be mandatory
+	if tx.Type != "Payment" {
+		return nil, &TXInvalid{}
+	}
+
+	// ID mandatory
+	if tx.ID == "" {
+		return nil, &TXInvalid{}
+	}
+
+	if _, ok := db.TXs[tx.ID]; !ok {
+		return nil, &TXNotFound{tx.ID}
+	}
+
+	db.Lock()
+	defer db.Unlock()
+	db.TXs[tx.ID] = &tx
+
+	return &tx, nil
 }
 
 // DeleteTX is responsible for deleting a transaction
 func (db *DB) DeleteTX(ID string) error {
+	if _, ok := db.TXs[ID]; !ok {
+		return &TXNotFound{ID}
+	}
+
+	db.Lock()
+	defer db.Unlock()
+	delete(db.TXs, ID)
+
 	return nil
 }

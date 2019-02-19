@@ -28,14 +28,14 @@ func init() {
 		middleware.Recoverer,
 		middleware.RequestID,
 	)
+}
 
+func TestTXGetUnknown(t *testing.T) {
+	// Reset
 	r.Route("/v1", func(r chi.Router) {
 		r.Mount("/api/payments", payments.Routes("test"))
 	})
 
-}
-
-func TestTXGetUnknown(t *testing.T) {
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/v1/api/payments/123", nil)
 	r.ServeHTTP(rec, req)
@@ -46,6 +46,11 @@ func TestTXGetUnknown(t *testing.T) {
 }
 
 func TestTXGetSuccess(t *testing.T) {
+	// Reset
+	r.Route("/v1", func(r chi.Router) {
+		r.Mount("/api/payments", payments.Routes("test"))
+	})
+
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/v1/api/payments/4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43", nil)
 	r.ServeHTTP(rec, req)

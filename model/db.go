@@ -1,4 +1,4 @@
-package models
+package model
 
 import (
 	"encoding/json"
@@ -9,8 +9,9 @@ import (
 	"sync"
 )
 
-// Datastore abstracts the db layer
+// Datastore interface abstracts the db layer
 type Datastore interface {
+	GetAllTX() ([]*TX, error)
 	GetTX(string) (*TX, error)
 	CreateTX(TX) (*TX, error)
 	UpdateTX(TX) (*TX, error)
@@ -22,7 +23,8 @@ type IDMap map[string]*TX
 
 // DB represents a custom database in this case
 // which holds the map of transactions with id keys
-// TODO: replace with proper sql.DB database
+// TODO replace with proper sql.DB database
+// TODO could use sync.Map depending on benchmark
 type DB struct {
 	sync.Mutex
 	TXs IDMap
