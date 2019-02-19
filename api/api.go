@@ -1,5 +1,5 @@
-// Package payments configures the routes for the payments api
-package payments
+// Package api configures the routes for the payments api
+package api
 
 import (
 	"log"

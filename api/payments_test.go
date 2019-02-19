@@ -1,5 +1,5 @@
 // Package payments configures the routes for the payments api
-package payments_test
+package api_test
 
 import (
 	"bytes"

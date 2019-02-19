@@ -1,3 +1,4 @@
+// Package model contains the data level logic and entities
 package model
 
 import "fmt"
