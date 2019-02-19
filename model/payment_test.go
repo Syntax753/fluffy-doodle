@@ -81,10 +81,20 @@ func TestDB_UpdateTX(t *testing.T) {
 	assert.NotNil(t, tx, "Expected transaction to be updated")
 	assert.Equal(t, "12233", tx.OrganisationID, "Expected the organisation to be updated")
 
+	tx.ID = "1234"
+	tx, err = db.UpdateTX(*tx)
+	_, ok := err.(*model.TXNotFound)
+	assert.True(t, ok, "Expected transaction not found")
+	assert.Nil(t, tx, "Expected nil transaction")
+
 	// ID is mandatory
+	// First get
+	tx, err = db.GetTX("4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43")
+	assert.NoError(t, err, "Expected transaction found")
+
 	tx.ID = ""
 	tx, err = db.UpdateTX(*tx)
-	_, ok := err.(*model.TXInvalid)
+	_, ok = err.(*model.TXInvalid)
 	assert.True(t, ok, "Expected transaction raised as invalid")
 	assert.Nil(t, tx, "Expected nil transaction")
 }
