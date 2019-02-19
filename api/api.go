@@ -99,6 +99,12 @@ func (env *Env) UpdatePayment(w http.ResponseWriter, r *http.Request) {
 	tx := &model.TX{}
 	err := render.DecodeJSON(r.Body, &tx)
 
+	if ID != tx.ID {
+		render.Status(r, http.StatusBadRequest)
+		render.JSON(w, r, &model.TXInvalid{Reason: "ID of update must match pass in transaction"})
+		return
+	}
+
 	if err != nil {
 		log.Printf("Error deserialising payment: %v\n", err)
 		render.Status(r, http.StatusBadRequest)
@@ -107,12 +113,12 @@ func (env *Env) UpdatePayment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// First try and update
-	tx, err = env.db.UpdateTX(*tx)
+	txUpdate, err := env.db.UpdateTX(*tx)
 
 	// Update success
 	if err == nil {
 		render.Status(r, http.StatusOK)
-		render.JSON(w, r, tx)
+		render.JSON(w, r, txUpdate)
 		return
 	}
 
@@ -123,8 +129,6 @@ func (env *Env) UpdatePayment(w http.ResponseWriter, r *http.Request) {
 		render.JSON(w, r, err)
 		return
 	}
-
-	// In which case create
 	tx, err = env.db.CreateTX(*tx)
 	if err != nil {
 		log.Printf("Error creating payment: %v\n", err)

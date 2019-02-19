@@ -24,6 +24,10 @@ router.go
 
     This is the primary runtime
 
+requests.http
+
+    Short demo collection of CURLequests which acts as a short tour of the API. Full design doc is work in progress
+
 /schema
 
     Contains the full data set of payments as well as a test data set

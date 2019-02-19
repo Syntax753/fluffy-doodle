@@ -20,7 +20,9 @@ func (tx *TXDatabaseEmpty) Error() string {
 }
 
 // TXInvalid represents a transaction missing manadatory data
-type TXInvalid struct{}
+type TXInvalid struct {
+	Reason string
+}
 
 func (tx *TXInvalid) Error() string {
 	return fmt.Sprintf("Invalid or incomplete transaction")
