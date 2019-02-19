@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -31,8 +30,8 @@ type DB struct {
 }
 
 // NewDB is the constructor for the db layer
-func NewDB(environment string) (*DB, error) {
-	data, err := processFile(fmt.Sprintf("../schema/%v.json", environment))
+func NewDB(jsonFile string) (*DB, error) {
+	data, err := processFile(jsonFile)
 
 	return &DB{TXs: data.asMap()}, err
 }

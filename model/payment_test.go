@@ -9,7 +9,7 @@ import (
 )
 
 func TestDB_GetAllTX(t *testing.T) {
-	db, err := model.NewDB("test")
+	db, err := model.NewDB("../schema/test.json")
 	if err != nil {
 		t.Fatalf("Could not open database: %v", err)
 	}
@@ -19,7 +19,7 @@ func TestDB_GetAllTX(t *testing.T) {
 }
 
 func TestDB_GetTX(t *testing.T) {
-	db, err := model.NewDB("test")
+	db, err := model.NewDB("../schema/test.json")
 	if err != nil {
 		t.Fatalf("Could not open database: %v", err)
 	}
@@ -35,7 +35,7 @@ func TestDB_GetTX(t *testing.T) {
 }
 
 func TestDB_CreateTX(t *testing.T) {
-	db, err := model.NewDB("test")
+	db, err := model.NewDB("../schema/test.json")
 	if err != nil {
 		t.Fatalf("Could not open database: %v", err)
 	}
@@ -66,7 +66,7 @@ func TestDB_CreateTX(t *testing.T) {
 }
 
 func TestDB_UpdateTX(t *testing.T) {
-	db, err := model.NewDB("test")
+	db, err := model.NewDB("../schema/test.json")
 	if err != nil {
 		t.Fatalf("Could not open database: %v", err)
 	}
@@ -100,7 +100,7 @@ func TestDB_UpdateTX(t *testing.T) {
 }
 
 func TestDB_DeleteTX(t *testing.T) {
-	db, err := model.NewDB("test")
+	db, err := model.NewDB("../schema/test.json")
 	if err != nil {
 		t.Fatalf("Could not open database: %v", err)
 	}

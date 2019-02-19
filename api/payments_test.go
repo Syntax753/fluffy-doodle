@@ -34,7 +34,7 @@ func init() {
 	)
 
 	r.Route("/v1", func(r chi.Router) {
-		r.Mount("/api/payments", payments.Routes("test"))
+		r.Mount("/api/payments", payments.Routes("../schema/test.json"))
 	})
 }
 

@@ -3,20 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 
 	payments "github.com/syntax753/fluffy-doodle/api"
-
-	"github.com/BurntSushi/toml"
 
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
-
-	"github.com/boltdb/bolt"
-	"github.com/syntax753/fluffy-doodle/db"
 )
 
 type config struct {
@@ -26,24 +20,8 @@ type config struct {
 const configFile = "config.toml"
 
 var (
-	conf  config
-	dbPay *bolt.DB
+	conf config
 )
-
-func init() {
-	log.Println("Starting router")
-
-	_, err := db.NewPayDB()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if _, err := toml.DecodeFile(configFile, &conf); err != nil {
-		log.Fatal("Can't open config file\n", err)
-	}
-
-	log.SetOutput(os.Stdout)
-}
 
 // Router retuns the mux for all the restful endpoints
 func Router() *chi.Mux {
@@ -59,7 +37,7 @@ func Router() *chi.Mux {
 	)
 
 	r.Route("/v1", func(r chi.Router) {
-		r.Mount("/api/payments", payments.Routes("prod"))
+		r.Mount("/api/payments", payments.Routes("schema/prod.json"))
 	})
 
 	return r
@@ -77,6 +55,5 @@ func main() {
 		log.Panicf("Logging err: %s\n", err.Error())
 	}
 
-	r.log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), router))
-
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), r))
 }
