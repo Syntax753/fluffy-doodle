@@ -45,4 +45,3 @@ router.go
 /api/payments
 
     Contains the payments subset of routes for the chi router. This delegates the actual logic to /model/payment and is just responsible for handling the http side of things
-

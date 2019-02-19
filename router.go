@@ -5,6 +5,7 @@ import (
 	"log"
 
 	payments "github.com/syntax753/fluffy-doodle/api"
+	"github.com/tkanos/gonfig"
 
 	"net/http"
 
@@ -15,9 +16,10 @@ import (
 
 type config struct {
 	Port int
+	Env  string
 }
 
-const configFile = "config.toml"
+const cfgFile = "config.json"
 
 var (
 	conf config
@@ -37,13 +39,20 @@ func Router() *chi.Mux {
 	)
 
 	r.Route("/v1", func(r chi.Router) {
-		r.Mount("/api/payments", payments.Routes("schema/prod.json"))
+		r.Mount("/api/payments", payments.Routes(fmt.Sprintf("schema/%v.json", conf.Env)))
 	})
 
 	return r
 }
 
 func main() {
+
+	conf = config{}
+	err := gonfig.GetConf(cfgFile, &conf)
+	if err != nil {
+		panic(err)
+	}
+
 	r := Router()
 
 	walkFunc := func(method string, route string, handler http.Handler, middwares ...func(http.Handler) http.Handler) error {
