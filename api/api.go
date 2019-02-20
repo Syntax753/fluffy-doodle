@@ -31,7 +31,7 @@ func Routes(environment string) *chi.Mux {
 	router.Get("/", env.GetPayments)
 	router.Get("/{id}", env.GetPayment)
 	router.Post("/", env.CreatePayment)
-	router.Put("/{id}", env.UpdatePayment)
+	router.Put("/", env.UpdatePayment)
 	router.Delete("/{id}", env.DeletePayment)
 	return router
 }
@@ -83,7 +83,7 @@ func (env *Env) CreatePayment(w http.ResponseWriter, r *http.Request) {
 	tx, err = env.db.CreateTX(*tx)
 	if err != nil {
 		log.Printf("Error creating payment: %v\n", err)
-		render.Status(r, http.StatusBadRequest)
+		render.Status(r, http.StatusMethodNotAllowed)
 		render.JSON(w, r, err)
 		return
 	}
@@ -93,17 +93,10 @@ func (env *Env) CreatePayment(w http.ResponseWriter, r *http.Request) {
 
 // UpdatePayment updates the payment
 func (env *Env) UpdatePayment(w http.ResponseWriter, r *http.Request) {
-	ID := chi.URLParam(r, "id")
-	log.Printf("PUT payment id %s\n", ID)
+	log.Printf("PUT payment")
 
 	tx := &model.TX{}
 	err := render.DecodeJSON(r.Body, &tx)
-
-	if ID != tx.ID {
-		render.Status(r, http.StatusBadRequest)
-		render.JSON(w, r, &model.TXInvalid{Reason: "ID of update must match pass in transaction"})
-		return
-	}
 
 	if err != nil {
 		log.Printf("Error deserialising payment: %v\n", err)
@@ -125,14 +118,14 @@ func (env *Env) UpdatePayment(w http.ResponseWriter, r *http.Request) {
 	// It's ok not to find the transaction to update
 	if _, ok := err.(*model.TXNotFound); !ok {
 		log.Printf("Error updating payment: %v\n", err)
-		render.Status(r, http.StatusBadRequest)
+		render.Status(r, http.StatusMethodNotAllowed)
 		render.JSON(w, r, err)
 		return
 	}
 	tx, err = env.db.CreateTX(*tx)
 	if err != nil {
 		log.Printf("Error creating payment: %v\n", err)
-		render.Status(r, http.StatusBadRequest)
+		render.Status(r, http.StatusMethodNotAllowed)
 		render.JSON(w, r, err)
 		return
 	}

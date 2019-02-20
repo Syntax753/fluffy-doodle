@@ -4,8 +4,11 @@ curl -X GET http://127.0.0.1:8080/v1/api/payments
 # Get single
 curl -X GET http://127.0.0.1:8080/v1/api/payments/"09a8fe0d-e239-4aff-8098-7923eadd0b98"
 
+# Create
+curl -X POST http://127.0.0.1:8080/v1/api/payments -d '{"type":"Payment","id":"1233","version":0,"organisation_id":"743d5b63-8e6f-432e-a8fa-123456789abc"}' 
+
 # Create/update
-curl -X PUT http://127.0.0.1:8080/v1/api/payments/1233 -d '{"type":"Payment","id":"1233","version":0,"organisation_id":"743d5b63-8e6f-432e-a8fa-c5d8d2ee5fcb"}' 
+curl -X PUT http://127.0.0.1:8080/v1/api/payments -d '{"type":"Payment","id":"1233","version":0,"organisation_id":"743d5b63-8e6f-432e-a8fa-c5d8d2ee5fcb"}' 
 
 # Get newly created
 curl -X GET http://127.0.0.1:8080/v1/api/payments/"1233"

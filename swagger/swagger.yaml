@@ -1,0 +1,148 @@
+swagger: "2.0"
+info:
+  description: "This is a prototype transaction/payment restful webservice. If using editor.swagger.io there's obviously CORS issues when interacting with this directly but swagger-ui running locally will allow interaction with the API. I've included this file under swagger/"
+  version: "1.0.0"
+  title: "Fluffy Doodle - because payments should be easy"
+  contact:
+    name: "Peter Turner"
+    url: "github.com/Syntax753"
+    email: "syntax.valid@gmail.com"
+host: "localhost:8080"
+basePath: "/v1/api"
+tags:
+- name: "API"
+  description: "Payment handling"
+schemes:
+- "http"
+paths:
+  /payments:
+    get:
+      tags:
+      - "payments"
+      summary: "List all payments"
+      description: "List all payments in the database (no pagination :))"
+      operationId: "listPayments"
+      consumes:
+      - "application/json"
+      produces: 
+      - "application/json"
+      responses:
+        200:
+          description: "Successfully found"
+          schema:
+            $ref: "#/definitions/Payment"
+    post:
+      tags:
+      - "payments"
+      summary: "Create payment"
+      description: "Minimal payment object represented here. Full object in model/payment.go"
+      operationId: "addPayment"
+      consumes:
+      - "application/json"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Payment object that needs creating"
+        required: true
+        schema:
+          $ref: "#/definitions/Payment"
+      responses:
+        201:
+          description: "Successfully created"
+        400:
+          description: "Invalid json"
+        405:
+          description: "Invalid payment type (has to be Payment for this demo)"
+    put:
+      tags:
+      - "payments"
+      summary: "Update an existing payment or create a new payment"
+      description: "Minimal payment object represented here. Full object in model/payment.go"
+      operationId: "updatePayment"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Payment object that needs updating/creating"
+        required: true
+        schema:
+          $ref: "#/definitions/Payment"
+      responses:
+        200:
+          description: "Payment found based on ID and updated"
+        201:
+          description: "Successfully created"
+        400:
+          description: "Invalid json"
+        405:
+          description: "Invalid payment type (has to be Payment for this demo)"
+  /payments/{paymentID}:
+    get:
+      tags:
+      - "payments"
+      summary: "Find payment"
+      description: "Returns a single payment"
+      operationId: "getPaymentById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "paymentID"
+        in: "path"
+        description: "ID of payment to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Successfully found"
+          schema:
+            $ref: "#/definitions/Payment"
+        404:
+          description: "Payment not found"
+    delete:
+      tags:
+      - "payments"
+      summary: "Delete a payment"
+      description: ""
+      operationId: "deletePayment"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "paymentID"
+        in: "path"
+        description: "Payment id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        204:
+          description: "No content - deletion success"
+        404:
+          description: "Payment not found"
+definitions:
+  Payment:
+    type: "object"
+    properties:
+      type:
+        type: "string"
+        enum:
+        - "Payment"
+        - "Holiday"
+        - "Car"
+        - "Insurance"
+      id:
+        type: "string"
+        format: "string"
+        example: "09a8fe0d-e239-4aff-8098-7923eadd0444"
+      version:
+        type: "integer"
+        format: "int32"
+      organisation_id:
+        type: "string"
+        format: "string"
+        example: "12345678-1234-1234-1234-123456789abc"

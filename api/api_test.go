@@ -97,12 +97,12 @@ func TestTX_CreateNonPayment(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/v1/api/payments", bytes.NewBuffer(b))
 
 	r.ServeHTTP(rec, req)
-	expectedStatus := 400
+	expectedStatus := 405
 
 	assert.Equal(t, expectedStatus, rec.Code, "Expected a 400 status")
 }
 
-func TestTX_UpdateMissingType(t *testing.T) {
+func TestTX_UpdateWithMissingType(t *testing.T) {
 	tx := &model.TX{ID: "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43", OrganisationID: "1245"}
 	b, err := json.Marshal(tx)
 
@@ -111,12 +111,12 @@ func TestTX_UpdateMissingType(t *testing.T) {
 	}
 
 	rec := httptest.NewRecorder()
-	req, _ := http.NewRequest("PUT", "/v1/api/payments/4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43", bytes.NewBuffer(b))
+	req, _ := http.NewRequest("PUT", "/v1/api/payments", bytes.NewBuffer(b))
 
 	r.ServeHTTP(rec, req)
-	expectedStatus := 400
+	expectedStatus := 405
 
-	assert.Equal(t, expectedStatus, rec.Code, "Expected a 400 status")
+	assert.Equal(t, expectedStatus, rec.Code, "Expected a 405 status")
 }
 
 func TestTX_Update(t *testing.T) {
@@ -128,7 +128,7 @@ func TestTX_Update(t *testing.T) {
 	}
 
 	rec := httptest.NewRecorder()
-	req, _ := http.NewRequest("PUT", "/v1/api/payments/4ee3a8d8-ca7b-4290-a52c-dd5b6165ec43", bytes.NewBuffer(b))
+	req, _ := http.NewRequest("PUT", "/v1/api/payments", bytes.NewBuffer(b))
 
 	r.ServeHTTP(rec, req)
 	expectedStatus := 200
