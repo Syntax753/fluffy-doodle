@@ -27,6 +27,12 @@ router.go
 requests.http
     Short demo collection of CURLequests which acts as a short tour of the API. Full design doc is work in progress
 
+/swagger
+    Contains the swagger documentation for the api
+
+/docs
+    Contains the pdf version of swagger
+
 /schema
     Contains the full data set of payments as well as a test data set
 
